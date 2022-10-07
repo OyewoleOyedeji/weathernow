@@ -33,7 +33,6 @@ onMounted(() => {
     if (_settings) {
       settings.value = JSON.parse(_settings);
     } else {
-      console.log(settings.value);
       window.localStorage.setItem("settings", JSON.stringify(settings.value));
     }
 

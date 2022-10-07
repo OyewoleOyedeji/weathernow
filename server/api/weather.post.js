@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
   // This is to prevent abuse of the API
-  if (event.req.headers.authorization.length === config.idLength) {
+  if (event.req.headers.authorization.length === config.public.idLength) {
     // Fetch the weather information
 
     try {

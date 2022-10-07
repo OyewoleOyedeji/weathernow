@@ -17,11 +17,11 @@ onMounted(() => {
     if (id) {
       _id.value = id;
     } else {
-      _id.value = nanoid(config.idLength);
+      _id.value = nanoid(config.public.idLength);
       window.localStorage.setItem("id", _id.value);
     }
   } else {
-    _id.value = nanoid(config.idLength);
+    _id.value = nanoid(config.public.idLength);
   }
 });
 
