@@ -1,0 +1,21 @@
+<script setup>
+const errorMessage = useState("errorMessage");
+</script>
+
+<template>
+  <section class="flex h-screen flex-col justify-center items-center w-full">
+    <h1 class="text-4xl">Something's not right 🤔</h1>
+    <h2>
+      We got this message -
+      <span
+        class="
+          before:content-[open-quote]
+          after:content-[close-quote]
+          text-main text-xl
+          mt-2
+        "
+        >{{ errorMessage }}</span
+      >
+    </h2>
+  </section>
+</template>

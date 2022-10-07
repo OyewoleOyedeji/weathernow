@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^5.3.3",
+    "@types/config": "^3.3.0",
+    "@vueuse/core": "^9.3.0",
+    "@vueuse/nuxt": "^9.3.0",
+    "config": "^3.3.8",
+    "nuxt": "3.0.0-rc.11"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.7.3",
+    "bootstrap-icons": "^1.9.1",
+    "nanoid": "^4.0.0"
+  }
+}
