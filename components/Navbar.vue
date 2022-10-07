@@ -1,9 +1,11 @@
 <script setup>
 import { promiseTimeout } from "@vueuse/core";
+import { nanoid } from "nanoid";
 
 const results = useState("results");
 const loading = useState("loading", () => false);
 const _error = useState("error", () => false);
+const config = useRuntimeConfig();
 
 const query = useState("query", () => "");
 const id = useState("id");
@@ -21,46 +23,48 @@ const checkWeather = async () => {
 
     loading.value = true;
     useTimeout(2800);
-    const { data, pending, error, refresh } = await useFetch("/api/weather", {
+    const { data, error } = await useFetch("/api/weather", {
       method: "post",
       body: { query: query.value, useAqi: "no" },
       server: false,
-      key: id.value,
+      key: nanoid(config.idLength),
       headers: {
         Authorization: id.value,
       },
     });
 
     /**
-     * Check if it is the initial load, else refresh the contents of the query
-     * Save the results and set loading status to false
-     *
-     * If there is an error, get the message from the response
-     * and parse the message to the <Error/> component
+     * Watch for a positive change for the error ref
+     * and perform actions accordingly
      */
 
-    if (!error.value) {
-      if (!initialLoad.value) {
-        refresh();
-        await promiseTimeout(3000);
-
-        if (error.value) {
-          useState("errorMessage", () => error.value.data.message);
+    watch(error, (_new, _old) => {
+      if (_new) {
+        useState("errorMessage", () => error.value.data.message);
+        promiseTimeout(3000).then(() => {
           _error.value = true;
           loading.value = false;
-        } else {
-          results.value = data.value;
-          loading.value = false;
-        }
+        });
       } else {
-        await promiseTimeout(3000);
-        results.value = data.value;
-        loading.value = false;
+        _error.value = false;
       }
+    });
+
+    /**
+     * Search for errors initially
+     */
+    if (!error.value) {
+      if (_error.value) {
+        _error.value = false;
+      }
+
+      results.value = data.value;
+      await promiseTimeout(3000);
+      loading.value = false;
     } else {
       useState("errorMessage", () => error.value.data.message);
-      await promiseTimeout(3000);
       _error.value = true;
+      await promiseTimeout(3000);
       loading.value = false;
     }
 
