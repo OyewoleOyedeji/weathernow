@@ -1,0 +1,7 @@
+pull_request_rules:
+  - name: Merge dependabot updates
+    conditions:
+      - label=dependencies
+    actions:
+      merge:
+        method: merge
