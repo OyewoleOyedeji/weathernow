@@ -1,8 +1,45 @@
-<script setup>
+<script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 
-const results = useState("results");
-const settings = useState("settings");
+const results = useState<object>("results");
+const settings = useState<object>("settings");
+const direction = useState<string | null>("direction", () => null);
+
+const calculateDirection = (_16pointDirection: string) => {
+  if (_16pointDirection.length === 3) {
+    if (_16pointDirection.slice(1, 3) === "SW") {
+      direction.value = "west";
+    } else if (_16pointDirection.slice(1, 3) === "NW") {
+      direction.value = "north";
+    } else if (_16pointDirection.slice(1, 3) === "NE") {
+      direction.value = "east";
+    } else if (_16pointDirection.slice(1, 3) === "SE") {
+      direction.value = "south";
+    }
+  } else if (_16pointDirection.length === 2) {
+    if (_16pointDirection === "NW") {
+      direction.value = "north";
+    } else if (_16pointDirection === "SW") {
+      direction.value = "west";
+    } else if (_16pointDirection === "NE") {
+      direction.value = "east";
+    } else if (_16pointDirection === "SE") {
+      direction.value = "south";
+    }
+  } else {
+    if (_16pointDirection === "N") {
+      direction.value = "north";
+    } else if (_16pointDirection === "S") {
+      direction.value = "south";
+    } else if (_16pointDirection === "W") {
+      direction.value = "west";
+    } else if (_16pointDirection === "E") {
+      direction.value = "east";
+    }
+  }
+};
+
+calculateDirection(results.value.data.current.wind_dir);
 </script>
 
 <template>
@@ -242,19 +279,19 @@ const settings = useState("settings");
               <svg class="w-20 h-20 fill-main">
                 <use
                   xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-down"
-                  v-if="results.data.current.wind_dir === 'S'"
+                  v-if="direction === 'south'"
                 />
                 <use
                   xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-up"
-                  v-else-if="results.data.current.wind_dir === 'N'"
+                  v-else-if="direction === 'north'"
                 />
                 <use
                   xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-left"
-                  v-else-if="results.data.current.wind_dir === 'W'"
+                  v-else-if="direction === 'west'"
                 />
                 <use
                   xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-right"
-                  v-else-if="results.data.current.wind_dir === 'E'"
+                  v-else-if="direction === 'east'"
                 />
               </svg>
               <div class="flex flex-col gap-4">
@@ -276,13 +313,13 @@ const settings = useState("settings");
                 </h1>
                 <h2 class="text-main text-lg">
                   {{
-                    results.data.current.wind_dir === "W"
+                    direction === "west"
                       ? "West"
-                      : results.data.current.wind_dir === "E"
+                      : direction === "east"
                       ? "East"
-                      : results.data.current.wind_dir === "S"
+                      : direction === "south"
                       ? "South"
-                      : results.data.current.wind_dir === "N"
+                      : direction === "north"
                       ? "North"
                       : ""
                   }}
