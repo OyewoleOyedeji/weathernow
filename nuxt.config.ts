@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   typescript: {
     shim: false,
   },
-  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt"],
+  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxtjs/color-mode"],
   app: {
     head: {
       title: "Weathernow",
@@ -42,5 +42,8 @@ export default defineNuxtConfig({
     public: {
       idLength: 64,
     },
+  },
+  colorMode: {
+    classSuffix: "",
   },
 });

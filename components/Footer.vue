@@ -50,17 +50,31 @@ const toggleModal = () => {
         />
       </svg>
     </button>
-    <h1 class="text-xl text-center mt-1">
+    <h1 class="text-xl text-center mt-2 md:mt-1 dark:text-white">
       Made with ❤️ & 🍞 by
       <NuxtLink
         to="https://github.com/OyewoleOyedeji"
-        class="underline text-main"
+        class="
+          underline
+          text-main
+          dark:opacity-50 dark:hover:opacity-100
+          hover:opacity-50
+          transition
+        "
         >OyewoleOyedeji</NuxtLink
       >
     </h1>
-    <h2 class="text-center text-lg mt-1">
+    <h2 class="text-center text-lg mt-1 dark:text-white">
       Powered by
-      <NuxtLink to="https://weatherapi.com/" class="text-main underline"
+      <NuxtLink
+        to="https://weatherapi.com/"
+        class="
+          text-main
+          underline
+          dark:opacity-50 dark:hover:opacity-100
+          hover:opacity-50
+          transition
+        "
         >WeatherAPI.com</NuxtLink
       >
     </h2>

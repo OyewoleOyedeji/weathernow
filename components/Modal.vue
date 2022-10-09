@@ -94,6 +94,7 @@ const closeModal = () => (isOpen.value = false);
                 overflow-hidden
                 rounded-2xl
                 bg-white
+                dark:bg-black
                 p-6
                 text-left
                 align-middle
@@ -104,7 +105,7 @@ const closeModal = () => (isOpen.value = false);
             >
               <DialogTitle
                 as="h3"
-                :class="`text-xl font-semibold leading-6 flex items-center gap-2 ${
+                :class="`text-xl font-semibold leading-6 flex items-center gap-2 dark:text-white ${
                   modalInfo.messageType === 'warning'
                     ? 'text-main opacity-70'
                     : ''
@@ -137,7 +138,7 @@ const closeModal = () => (isOpen.value = false);
               <div class="mt-2">
                 <p
                   class="text-lg text-gray-500"
-                  v-if="modalInfo.messageType !== 'settings'"
+                  v-if="modalInfo.messageType === 'warning'"
                 >
                   {{ modalInfo.message }}
                 </p>
@@ -145,7 +146,7 @@ const closeModal = () => (isOpen.value = false);
                   class="flex flex-col"
                   v-else-if="modalInfo.messageType === 'settings'"
                 >
-                  <div class="flex justify-between mt-4">
+                  <div class="flex justify-between mt-4 dark:text-white">
                     <h4>Display temperature 🌡️ in (&deg;C/&deg;F)</h4>
                     <Switch
                       v-model="useCelsuis"
@@ -161,7 +162,7 @@ const closeModal = () => (isOpen.value = false);
                       ></span>
                     </Switch>
                   </div>
-                  <div class="flex justify-between mt-4">
+                  <div class="flex justify-between mt-4 dark:text-white">
                     <h4>Show the air quality 🍃</h4>
                     <Switch
                       v-model="settings.useAirQuality"
@@ -202,6 +203,7 @@ const closeModal = () => (isOpen.value = false);
                     focus-visible:ring-2
                     focus-visible:ring-main
                     focus-visible:ring-offset-2
+                    dark:opacity-50 dark:hover:opacity-100
                   "
                   @click="closeModal"
                   title="Close me"

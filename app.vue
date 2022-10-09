@@ -3,13 +3,14 @@ import { nanoid } from "nanoid";
 
 useHead({
   bodyAttrs: {
-    class: "relative",
+    class: "dark:bg-black dark:bg-opacity-90",
   },
 });
 
 const config = useRuntimeConfig();
 const _id = useState("id", () => "");
 
+// Create an id and store the id in localStorage if available
 onMounted(() => {
   if (window.localStorage) {
     const id = window.localStorage.getItem("id");
