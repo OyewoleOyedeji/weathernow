@@ -18,11 +18,13 @@ const modalInfo = useState("modalMessage", () => {
 });
 
 const useCelsuis = useState("useCelsuis", () => true);
+const useDefaultUnit = useState("useDefaultUnit", () => true);
 
 const settings = useState("settings", () => {
   const _settings = {
     useAirQuality: false,
     defaultTemperature: "celsuis",
+    defaultUnit: "km/hr",
   };
   return _settings;
 });
@@ -49,6 +51,14 @@ onMounted(() => {
         settings.value.defaultTemperature = "fahrenheit";
       } else {
         settings.value.defaultTemperature = "celsuis";
+      }
+    });
+
+    watch(useDefaultUnit, (_new) => {
+      if (!_new) {
+        settings.value.defaultUnit = "m/hr";
+      } else {
+        settings.value.defaultUnit = "km/hr";
       }
     });
   }
@@ -147,6 +157,22 @@ const closeModal = () => (isOpen.value = false);
                   v-else-if="modalInfo.messageType === 'settings'"
                 >
                   <div class="flex justify-between mt-4 dark:text-white">
+                    <h4>Default unit (kilometers/hour or miles/hour)</h4>
+                    <Switch
+                      v-model="useDefaultUnit"
+                      :class="`bg-main relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                        !useDefaultUnit ? 'opacity-100' : 'opacity-50'
+                      }`"
+                    >
+                      <span class="sr-only">Default unit</span>
+                      <span
+                        :class="`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                          !useDefaultUnit ? 'translate-x-6' : 'translate-x-1'
+                        }`"
+                      ></span>
+                    </Switch>
+                  </div>
+                  <div class="flex justify-between mt-4 dark:text-white">
                     <h4>Display temperature 🌡️ in (&deg;C/&deg;F)</h4>
                     <Switch
                       v-model="useCelsuis"
@@ -154,7 +180,9 @@ const closeModal = () => (isOpen.value = false);
                         !useCelsuis ? 'opacity-100' : 'opacity-50'
                       }`"
                     >
-                      <span class="sr-only">Show the air quality</span>
+                      <span class="sr-only"
+                        >Display temperature in &deg;C / &deg;F</span
+                      >
                       <span
                         :class="`inline-block h-4 w-4 transform rounded-full bg-white transition ${
                           !useCelsuis ? 'translate-x-6' : 'translate-x-1'

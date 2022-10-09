@@ -14,7 +14,15 @@ const toggleModal = () => {
 
 <template>
   <footer
-    class="absolute bottom-0 flex flex-col items-center mx-auto w-full mb-3"
+    class="
+      absolute
+      flex flex-col
+      items-center
+      mx-auto
+      w-full
+      bottom-5
+      2xl:bottom-0
+    "
   >
     <button
       class="
@@ -50,33 +58,40 @@ const toggleModal = () => {
         />
       </svg>
     </button>
-    <h1 class="text-xl text-center mt-2 md:mt-1 dark:text-white">
-      Made with ❤️ & 🍞 by
-      <NuxtLink
-        to="https://github.com/OyewoleOyedeji"
-        class="
-          underline
-          text-main
-          dark:opacity-50 dark:hover:opacity-100
-          hover:opacity-50
-          transition
-        "
-        >OyewoleOyedeji</NuxtLink
-      >
-    </h1>
-    <h2 class="text-center text-lg mt-1 dark:text-white">
-      Powered by
-      <NuxtLink
-        to="https://weatherapi.com/"
-        class="
-          text-main
-          underline
-          dark:opacity-50 dark:hover:opacity-100
-          hover:opacity-50
-          transition
-        "
-        >WeatherAPI.com</NuxtLink
-      >
-    </h2>
+    <div class="flex flex-col lg:flex-row gap-4 items-center">
+      <h1 class="text-xl text-center mt-2 md:mt-1 dark:text-white mr-0">
+        Made with ❤️ & 🍞 by
+        <NuxtLink
+          to="https://github.com/OyewoleOyedeji"
+          class="
+            underline
+            text-main
+            dark:opacity-50 dark:hover:opacity-100
+            hover:opacity-50
+            transition
+          "
+          >OyewoleOyedeji</NuxtLink
+        >
+      </h1>
+      <svg class="w-6 h-6 fill-main">
+        <use
+          xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#lightning-charge-fill"
+        />
+      </svg>
+      <h2 class="text-center text-lg mt-1 dark:text-white">
+        Powered by
+        <NuxtLink
+          to="https://weatherapi.com/"
+          class="
+            text-main
+            underline
+            dark:opacity-50 dark:hover:opacity-100
+            hover:opacity-50
+            transition
+          "
+          >WeatherAPI.com</NuxtLink
+        >
+      </h2>
+    </div>
   </footer>
 </template>

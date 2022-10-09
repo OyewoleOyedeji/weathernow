@@ -204,11 +204,28 @@ const toggleThemeOptions = useToggle(showThemeOptions);
                 h-6
                 group-hover:opacity-50
                 transition
-                dark:group-hover:opacity-100 dark:opacity-50
+                dark:group-hover:opacity-100 dark:opacity-50 dark:hidden
               "
             >
               <use
                 xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#palette-fill"
+              />
+            </svg>
+            <svg
+              class="
+                fill-main
+                md:w-8 md:h-8
+                w-6
+                h-6
+                group-hover:opacity-50
+                transition
+                dark:group-hover:opacity-100 dark:opacity-50
+                hidden
+                dark:block
+              "
+            >
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#palette"
               />
             </svg>
           </PopoverButton>
@@ -218,7 +235,8 @@ const toggleThemeOptions = useToggle(showThemeOptions);
               p-5
               bg-main bg-opacity-80
               left-1/2
-              top-[5vh]
+              top-[7vh]
+              2xl:top-[5vh]
               -translate-x-1/2
               flex flex-col
               gap-4
@@ -310,15 +328,26 @@ const toggleThemeOptions = useToggle(showThemeOptions);
             md:block
             group-hover:opacity-50
             transition
-            dark:group-hover:opacity-100 dark:opacity-50
+            dark:group-hover:opacity-100 dark:opacity-50 dark:hidden
           "
         >
           <use
-            :xlink:href="
-              $colorMode.preference === 'dark'
-                ? '/node_modules/bootstrap-icons/bootstrap-icons.svg#gear-fill'
-                : '/node_modules/bootstrap-icons/bootstrap-icons.svg#gear'
-            "
+            xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#gear-fill"
+          />
+        </svg>
+        <svg
+          class="
+            fill-main
+            w-8
+            h-8
+            hidden
+            group-hover:opacity-50
+            transition
+            dark:group-hover:opacity-100 dark:opacity-50 dark:block
+          "
+        >
+          <use
+            xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#gear"
           />
         </svg>
       </button>

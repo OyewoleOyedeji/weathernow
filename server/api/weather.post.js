@@ -2,10 +2,8 @@ export default defineEventHandler(async (event) => {
   const { query, useAqi } = await useBody(event);
   const config = useRuntimeConfig();
 
-  // This is to prevent abuse of the API
   if (event.req.headers.authorization.length === config.public.idLength) {
     // Fetch the weather information
-
     try {
       const data = await $fetch(
         `${config.baseUri}/v1/current.json?key=${config.apiKey}&q=${query}&aqi=${useAqi}`

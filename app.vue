@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 useHead({
   bodyAttrs: {
-    class: "dark:bg-black dark:bg-opacity-90",
+    class: "dark:bg-black dark:bg-opacity-90 relative h-screen",
   },
 });
 
