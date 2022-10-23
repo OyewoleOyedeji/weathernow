@@ -12,7 +12,7 @@
     "@nuxtjs/tailwindcss": "^6.1.0",
     "@types/config": "^3.3.0",
     "@vueuse/core": "^9.3.1",
-    "@vueuse/nuxt": "^9.3.0",
+    "@vueuse/nuxt": "^9.3.1",
     "config": "^3.3.8",
     "nuxt": "3.0.0-rc.11"
   },
