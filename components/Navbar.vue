@@ -17,13 +17,13 @@ interface settings {
   unit: string;
 }
 
-const settings = useState<settings>("settings");
-const isSettingsOpen = useState<boolean>("isModalOpen");
+const isModalOpen = useState<boolean>("isModalOpen");
 const query = useState<string>("query", () => "");
 
 const showThemeOptions = useState("showThemeOptions", () => false);
 
 const checkWeather = async () => {
+  const settings = useState<settings>("settings");
   const initialLoad = useState<boolean>("initialLoad");
   const loading = useState("loading", () => true);
   const results = useState<{}>("results");
@@ -60,8 +60,7 @@ const checkWeather = async () => {
   }
 };
 
-// const toggleModal = (type: string) => useToggleModal(type);
-const toggleSettings = () => useToggle(isSettingsOpen)();
+const toggleSettings = () => useToggle(isModalOpen)();
 
 const selectTheme = (option: string) => useSelectTheme(option);
 
@@ -75,14 +74,12 @@ const toggleThemeOptions = useToggle(showThemeOptions);
       container
       mx-auto
       mt-10
-      justify-around
-      md:justify-between
-      items-center
-      w-[85%]
-      md:w-[90%]
+      justify-center
+      md:justify-between md:items-center
+      w-[90%]
     "
   >
-    <div class="flex items-center gap-4 md:gap-6 w-9/12 lg:w-[80%]">
+    <div class="items-center gap-6 hidden md:flex lg:w-[70%] xl:w-full">
       <!-- Search button -->
       <button
         class="group disabled:opacity-50"
@@ -90,10 +87,11 @@ const toggleThemeOptions = useToggle(showThemeOptions);
         @click="checkWeather()"
         :disabled="query.length === 0"
       >
-        <svg class="transition fill-main group-hover:opacity-50 w-8 h-8">
-          <use
-            xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#check-circle-fill"
-          />
+        <svg
+          class="transition fill-main disabled:opacity-50 w-8 h-8"
+          :class="query.length > 0 ? 'group-hover:opacity-50' : ''"
+        >
+          <use xlink:href="/bootstrap-icons.svg#check-circle-fill" />
         </svg>
       </button>
 
@@ -116,81 +114,82 @@ const toggleThemeOptions = useToggle(showThemeOptions);
         <input
           name="search"
           type="text"
-          placeholder="What's the weather of ?!"
+          placeholder="Enter your location ?!"
           class="
             w-full
             placeholder:text-xl
             outline-none
             caret-main
-            dark:caret-orange-600 dark:placeholder:text-orange-600
+            dark:caret-white dark:placeholder:text-white
             placeholder:text-main placeholder:opacity-50
             bg-transparent
             text-main
-            dark:text-orange-400
+            dark:text-white
           "
           v-model="query"
         />
       </div>
     </div>
 
-    <!-- Options menu -->
-    <div class="flex items-center w-[10%] md:justify-end md:gap-8 gap-5">
+    <!-- Other half of the navigation -->
+    <div class="flex items-center w-3/12 justify-center gap-3 lg:gap-5">
+      <!-- GitHub -->
       <NuxtLink
-        to="https://github.com/OyewoleOyedeji/weatherme"
+        to="https://github.com/OyewoleOyedeji/weathernow"
         target="_blank"
         title="Visit GitHub repository"
+        class="
+          p-3
+          bg-main bg-opacity-60
+          rounded-2xl
+          hover:bg-opacity-70
+          transition-colors
+          duration-[300ms]
+        "
         ><svg
           class="
             w-6
             h-6
+            opacity-60
             md:w-8 md:h-8
-            hover:opacity-50
             transition
             dark:fill-white dark:opacity-50 dark:hover:opacity-100
           "
         >
-          <use
-            xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#github"
-          /></svg
+          <span class="sr-only">Visit project repository</span>
+          <use xlink:href="/bootstrap-icons.svg#github" /></svg
       ></NuxtLink>
+
       <Popover>
         <div class="relative">
+          <!-- Toggle theme -->
           <PopoverButton
-            class="group rotate-90 outline-none"
+            class="
+              group
+              rotate-90
+              outline-none
+              p-3
+              bg-main bg-opacity-60
+              rounded-2xl
+              hover:bg-opacity-70
+              transition-colors
+              duration-[300ms]
+            "
             @click="toggleThemeOptions()"
             title="Toggle theme"
           >
             <svg
               class="
-                fill-main
+                fill-black
+                opacity-60
                 md:w-8 md:h-8
                 w-6
                 h-6
-                group-hover:opacity-50
+                dark:group-hover:opacity-100 dark:opacity-50 dark:fill-white
                 transition
-                dark:group-hover:opacity-100 dark:opacity-50 dark:hidden
               "
             >
-              <use
-                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#palette-fill"
-              />
-            </svg>
-            <svg
-              class="
-                fill-main
-                md:w-8 md:h-8
-                w-6
-                h-6
-                group-hover:opacity-50
-                transition
-                dark:group-hover:opacity-100 dark:opacity-50
-                hidden
-                dark:block
-              "
-            >
-              <use
-                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#palette"
-              />
+              <use xlink:href="/bootstrap-icons.svg#palette-fill" />
             </svg>
           </PopoverButton>
           <TransitionRoot
@@ -231,9 +230,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
                 @click="selectTheme('system')"
               >
                 <svg class="w-6 h-6 transition fill-white">
-                  <use
-                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#laptop"
-                  />
+                  <use xlink:href="/bootstrap-icons.svg#laptop" />
                 </svg>
                 <h1 class="text-white">System</h1>
               </div>
@@ -253,9 +250,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
                 @click="selectTheme('light')"
               >
                 <svg class="w-6 h-6 transition fill-white">
-                  <use
-                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#brightness-high-fill"
-                  />
+                  <use xlink:href="/bootstrap-icons.svg#brightness-high-fill" />
                 </svg>
                 <h1 class="text-white">Light</h1>
               </div>
@@ -275,9 +270,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
                 @click="selectTheme('dark')"
               >
                 <svg class="w-6 h-6 fill-white">
-                  <use
-                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#moon-fill"
-                  />
+                  <use xlink:href="/bootstrap-icons.svg#moon-fill" />
                 </svg>
                 <h1 class="text-white">Dark</h1>
               </div>
@@ -285,37 +278,33 @@ const toggleThemeOptions = useToggle(showThemeOptions);
           </TransitionRoot>
         </div>
       </Popover>
-      <button class="group" title="Toggle settings" @click="toggleSettings()">
+
+      <!-- Toggle settings -->
+      <button
+        class="
+          group
+          p-3
+          bg-main bg-opacity-60
+          rounded-2xl
+          hover:bg-opacity-70
+          duration-[300ms]
+        "
+        title="Toggle settings"
+        @click="toggleSettings()"
+      >
         <svg
           class="
-            fill-main
-            w-8
-            h-8
-            hidden
-            md:block
-            group-hover:opacity-50
+            fill-black
+            opacity-60
+            dark:fill-white
+            w-6
+            h-6
+            md:w-8 md:h-8
             transition
-            dark:group-hover:opacity-100 dark:opacity-50 dark:hidden
+            dark:group-hover:opacity-100 dark:opacity-50
           "
         >
-          <use
-            xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#gear-fill"
-          />
-        </svg>
-        <svg
-          class="
-            fill-main
-            w-8
-            h-8
-            hidden
-            group-hover:opacity-50
-            transition
-            dark:group-hover:opacity-100 dark:opacity-50 dark:block
-          "
-        >
-          <use
-            xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#gear"
-          />
+          <use xlink:href="/bootstrap-icons.svg#gear-fill" />
         </svg>
       </button>
     </div>

@@ -5,7 +5,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare && cp node_modules/bootstrap-icons/bootstrap-icons.svg public/"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.1.8",

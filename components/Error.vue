@@ -6,9 +6,9 @@ const message = useState<errorMessage>("errorMessage");
 </script>
 
 <template>
-  <section class="flex h-screen flex-col justify-center items-center w-full">
-    <h1 class="text-4xl">Something's not right 🤔</h1>
-    <h2 class="text-xl mt-2">
+  <section class="flex flex-col justify-center items-center w-full">
+    <h1 class="text-4xl dark:text-white">Something's not right 🤔</h1>
+    <h2 class="text-xl mt-2 dark:text-white">
       We got this message -
       <span
         class="

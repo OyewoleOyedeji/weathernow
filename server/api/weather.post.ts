@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
         `${config.baseUri}/geo/1.0/direct?q=${query}&appid=${config.apiKey}`
       );
 
-      if (geo.length > 0) {
+      if (geo.length === 1) {
         const coordinates: coordinates = {
           lat: geo[0].lat,
           lon: geo[0].lon,
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
         return {
           data,
         };
-      } else {
+      } else if (geo.length === 0) {
         event.res.statusCode = 404;
         return {
           message: "Location not found",

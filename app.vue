@@ -4,7 +4,7 @@ import { fetchWeather } from "~/composables/useUtilities";
 
 useHead({
   bodyAttrs: {
-    class: "dark:bg-black dark:bg-opacity-90 relative h-[80vh]",
+    class: "dark:bg-black dark:bg-opacity-90 h-[80vh]",
   },
 });
 
@@ -81,10 +81,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <Navbar />
-    <Content />
-    <Modal />
-    <Footer />
-  </div>
+  <Navbar />
+  <Content />
+  <Modal />
+  <Footer />
 </template>

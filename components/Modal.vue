@@ -79,6 +79,12 @@ const closeModal = () => (isModalOpen.value = false);
               class="
                 w-full
                 max-w-md
+                h-[80vh]
+                md:h-fit
+                flex flex-col
+                md:block
+                justify-center
+                md:justify-start
                 transform
                 overflow-hidden
                 rounded-2xl
@@ -106,9 +112,7 @@ const closeModal = () => (isModalOpen.value = false);
               >
                 Settings
                 <svg class="fill-main w-5 h-5 inline">
-                  <use
-                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#gear"
-                  />
+                  <use xlink:href="/bootstrap-icons.svg#gear" />
                 </svg>
               </DialogTitle>
               <div class="mt-2">
@@ -186,7 +190,7 @@ const closeModal = () => (isModalOpen.value = false);
                     Done
                     <svg class="fill-white w-5 h-5">
                       <use
-                        xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#check-circle-fill"
+                        xlink:href="/bootstrap-icons.svg#check-circle-fill"
                       />
                     </svg>
                   </div>
