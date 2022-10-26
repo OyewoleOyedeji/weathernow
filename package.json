@@ -21,6 +21,7 @@
     "@headlessui/vue": "^1.7.3",
     "bootstrap-icons": "^1.9.1",
     "moment": "^2.29.4",
-    "nanoid": "^4.0.0"
+    "nanoid": "^4.0.0",
+    "tippy.js": "^6.3.7"
   }
 }

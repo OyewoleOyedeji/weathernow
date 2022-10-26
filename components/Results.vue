@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
+import tippy from "tippy.js";
 import {
   calculateDirection,
   countryCodeConverter,
@@ -9,12 +10,25 @@ import {
 
 import { settings } from "~/types/interfaces";
 
+import "tippy.js/dist/tippy.css";
+
 interface results {
   data: any;
 }
 
 const results = useState<results>("results");
 const settings = useState<settings>("settings");
+
+onMounted(() => {
+  tippy("#weather-icon", {
+    content: `${(results.value.data.weather[0].description as string)
+      .charAt(0)
+      .toUpperCase()}${(
+      results.value.data.weather[0].description as string
+    ).slice(1)}`,
+    theme: "light",
+  });
+});
 
 const convertCodeToCountry = (countryCode: string) =>
   countryCodeConverter(countryCode);
@@ -55,6 +69,7 @@ const { temperature } = thermometer(
         <img
           :src="`http://openweathermap.org/img/wn/${results.data.weather[0].icon}@2x.png`"
           :alt="`${results.data.weather[0].main} icon`"
+          id="weather-icon"
         />
         <div class="flex flex-col">
           <h1 class="text-2xl md:text-5xl dark:text-white">
@@ -95,9 +110,7 @@ const { temperature } = thermometer(
             ? "K"
             : settings.unit === "metric"
             ? "&deg;C"
-            : settings.unit === "imperial"
-            ? "&deg;F"
-            : ""
+            : "&deg;F"
         }}
       </h1>
     </div>
@@ -377,3 +390,13 @@ const { temperature } = thermometer(
     </TabGroup>
   </div>
 </template>
+
+<style>
+.tippy-arrow {
+  color: #f03a17;
+}
+
+.tippy-box {
+  background: #f03a17;
+}
+</style>
