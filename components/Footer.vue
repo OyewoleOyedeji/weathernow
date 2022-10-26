@@ -44,6 +44,7 @@ const checkWeather = async () => {
       loading.value = false;
     }
   }
+  query.value = "";
 };
 
 const query = useState("query", () => "");

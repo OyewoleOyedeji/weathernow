@@ -58,6 +58,7 @@ const checkWeather = async () => {
       loading.value = false;
     }
   }
+  query.value = "";
 };
 
 const toggleSettings = () => useToggle(isModalOpen)();

@@ -38,7 +38,6 @@ const checkWeather = async () => {
     results.value = _response.value;
     loading.value = false;
   } catch (error) {
-    query.value = "";
     const message = useState("errorMessage", () => "");
     if (error.data.message) {
       message.value = error.data.message;
@@ -46,6 +45,8 @@ const checkWeather = async () => {
       loading.value = false;
     }
   }
+
+  query.value = "";
 };
 
 const query = useState("query", () => "");
@@ -73,6 +74,7 @@ const query = useState("query", () => "");
         justify-center
         dark:text-white
         h-screen
+        md:h-fit
       "
       v-if="!loading && initialLoad"
     >
