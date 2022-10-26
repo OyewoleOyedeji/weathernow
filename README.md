@@ -1,6 +1,22 @@
-# Nuxt 3 Minimal Starter
+# Weathernow
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+<img src="public/favicon.svg" width="64" />
+
+![GitHub repo size](https://img.shields.io/github/repo-size/OyewoleOyedeji/weathernow?color=f03a17&label=Project%20size&style=for-the-badge)
+
+ A server-side rendered weather application
+
+**This project was powered by [Nuxt 3](https://v3.nuxtjs.org/) and [OpenWeatherMap](https://openweathermap.org)**
+
+## Hold up 🛑
+
+Before you continue you need to have a `Weather API Key` which the project will use
+
+You can get one from <https://openweathermap.org> after creating an account
+
+**Note:** After which you'll get your `API key` from <https://home.openweathermap.org/api_keys>
+
+For the project to know your `API Key` rename `config/default.json` to `config/development.json` and fill in the `weatherApiKey` parameter with your `API Key`
 
 ## Setup
 
@@ -19,7 +35,7 @@ pnpm install --shamefully-hoist
 
 ## Development Server
 
-Start the development server on http://localhost:3000
+Start the development server on <http://localhost:3000>
 
 ```bash
 npm run dev
@@ -30,13 +46,13 @@ npm run dev
 Build the application for production:
 
 ```bash
-npm run build
+weatherApiKey=${KEY} npm run build
 ```
+
+**Note:** where `KEY` is the value of `weatherApiKey` (you're `API Key`)
 
 Locally preview production build:
 
 ```bash
 npm run preview
 ```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
