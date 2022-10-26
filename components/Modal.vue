@@ -8,11 +8,7 @@ import {
   Switch,
 } from "@headlessui/vue";
 import { promiseTimeout } from "@vueuse/core";
-
-interface settings {
-  useBrowserLocation: boolean;
-  unit: string;
-}
+import { settings } from "~/types/interfaces";
 
 const isModalOpen = useState("isModalOpen", () => false);
 const settings = useState<settings>("settings");

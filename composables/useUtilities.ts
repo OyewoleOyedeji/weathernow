@@ -1,10 +1,5 @@
 import moment from "moment";
 
-interface modalInfo {
-  messageType: string;
-  message: string | null;
-}
-
 interface results {
   value: any;
 }
@@ -123,9 +118,6 @@ export const fetchWeather = async (
       },
       onResponse({ response }) {
         _response.value = response._data;
-      },
-      onRequestError({ error }) {
-        console.log(error.message);
       },
       onResponseError({ response }) {
         _response.value = response._data;

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-interface errorMessage {
-  message: string;
-}
+import { errorMessage } from "~/types/interfaces";
 const message = useState<errorMessage>("errorMessage");
 </script>
 

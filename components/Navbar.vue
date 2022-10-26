@@ -7,15 +7,7 @@ import {
 } from "@headlessui/vue";
 
 import { fetchWeather } from "~/composables/useUtilities";
-
-interface errorMessage {
-  message: string;
-}
-
-interface settings {
-  useBrowserLocation: boolean;
-  unit: string;
-}
+import { settings, errorMessage } from "~/types/interfaces";
 
 const isModalOpen = useState<boolean>("isModalOpen");
 const query = useState<string>("query", () => "");
@@ -56,12 +48,10 @@ const checkWeather = async () => {
       message.value = "Network request failed";
       _error.value = true;
       loading.value = false;
-    } else {
-      if (error.data.message) {
-        message.value = error.data.message;
-        _error.value = true;
-        loading.value = false;
-      }
+    } else if (error.data.message) {
+      message.value = error.data.message;
+      _error.value = true;
+      loading.value = false;
     }
   }
   query.value = "";

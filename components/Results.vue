@@ -7,10 +7,7 @@ import {
   thermometer,
 } from "~/composables/useUtilities";
 
-interface settings {
-  useBrowserLocation: boolean;
-  unit: string;
-}
+import { settings } from "~/types/interfaces";
 
 interface results {
   data: any;

@@ -1,22 +1,13 @@
 <script setup lang="ts">
 import { nanoid } from "nanoid";
 import { fetchWeather } from "~/composables/useUtilities";
+import { settings } from "~/types/interfaces";
 
 useHead({
   bodyAttrs: {
     class: "dark:bg-black dark:bg-opacity-90 h-[80vh]",
   },
 });
-
-interface settings {
-  useBrowserLocation: boolean;
-  unit: string;
-}
-
-interface position {
-  longitude: number;
-  latitude: number;
-}
 
 const { public: readableConfig } = useRuntimeConfig();
 const loading = useState("loading", () => false);

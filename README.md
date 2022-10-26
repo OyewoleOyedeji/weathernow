@@ -4,11 +4,11 @@
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/OyewoleOyedeji/weathernow?color=f03a17&label=Project%20size&style=for-the-badge)
 
- A server-side rendered weather application
+A server-side rendered weather application
 
 **This project was powered by [Nuxt 3](https://v3.nuxtjs.org/) and [OpenWeatherMap](https://openweathermap.org)**
 
-## Hold up 🛑
+### **Hold up 🛑**
 
 Before you continue you need to have a `Weather API Key` which the project will use
 
@@ -56,3 +56,5 @@ Locally preview production build:
 ```bash
 npm run preview
 ```
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=github.com%2FOyewoleOyedeji%2Fweathernow&env=weatherApiKey&envDescription=API%20Keys%20needed%20for%20request%20to%20weather%20API&envLink=https%3A%2F%2Fhome.openweathermap.org%2Fapi_keys)

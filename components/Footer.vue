@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { fetchWeather } from "~/composables/useUtilities";
-
-interface settings {
-  useBrowserLocation: boolean;
-  unit: string;
-}
+import { settings } from "~/types/interfaces";
 
 const initialLoad = useState("initialLoad");
 
@@ -42,12 +38,10 @@ const checkWeather = async () => {
       message.value = "Network request failed";
       _error.value = true;
       loading.value = false;
-    } else {
-      if (error.data.message) {
-        message.value = error.data.message;
-        _error.value = true;
-        loading.value = false;
-      }
+    } else if (error.data.message) {
+      message.value = error.data.message;
+      _error.value = true;
+      loading.value = false;
     }
   }
   query.value = "";
