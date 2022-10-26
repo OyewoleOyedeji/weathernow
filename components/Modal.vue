@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {
   TransitionRoot,
   TransitionChild,
@@ -7,37 +7,19 @@ import {
   DialogTitle,
   Switch,
 } from "@headlessui/vue";
+import { promiseTimeout } from "@vueuse/core";
 
-const isOpen = useState("isOpen", () => false);
-const modalInfo = useState("modalMessage", () => {
-  const blob = {
-    messageType: null,
-    message: "",
-  };
-  return blob;
-});
+interface settings {
+  useBrowserLocation: boolean;
+  unit: string;
+}
 
-const useCelsuis = useState("useCelsuis", () => true);
-const useDefaultUnit = useState("useDefaultUnit", () => true);
+const isModalOpen = useState("isModalOpen", () => false);
+const settings = useState<settings>("settings");
+const useBrowserLocation = useState("temporaryUseBrowserLocation");
 
-const settings = useState("settings", () => {
-  const _settings = {
-    useAirQuality: false,
-    defaultTemperature: "celsuis",
-    defaultUnit: "km/hr",
-  };
-  return _settings;
-});
-
-onMounted(() => {
+onMounted(async () => {
   if (window.localStorage) {
-    const _settings = window.localStorage.getItem("settings");
-    if (_settings) {
-      settings.value = JSON.parse(_settings);
-    } else {
-      window.localStorage.setItem("settings", JSON.stringify(settings.value));
-    }
-
     watch(
       settings,
       (_new) => {
@@ -45,31 +27,28 @@ onMounted(() => {
       },
       { deep: true }
     );
-
-    watch(useCelsuis, (_new) => {
-      if (!_new) {
-        settings.value.defaultTemperature = "fahrenheit";
-      } else {
-        settings.value.defaultTemperature = "celsuis";
-      }
-    });
-
-    watch(useDefaultUnit, (_new) => {
-      if (!_new) {
-        settings.value.defaultUnit = "m/hr";
-      } else {
-        settings.value.defaultUnit = "km/hr";
-      }
-    });
   }
+  await promiseTimeout(100);
+  useState(
+    "temporaryUseBrowserLocation",
+    () => settings.value.useBrowserLocation
+  );
+
+  watch(useBrowserLocation, (_new) => {
+    if (!_new) {
+      settings.value.useBrowserLocation = false;
+    } else {
+      settings.value.useBrowserLocation = true;
+    }
+  });
 });
 
-const closeModal = () => (isOpen.value = false);
+const closeModal = () => (isModalOpen.value = false);
 </script>
 
 
 <template>
-  <TransitionRoot appear :show="isOpen" as="template">
+  <TransitionRoot appear :show="isModalOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-10" title="Close me">
       <TransitionChild
         as="template"
@@ -115,95 +94,62 @@ const closeModal = () => (isOpen.value = false);
             >
               <DialogTitle
                 as="h3"
-                :class="`text-xl font-semibold leading-6 flex items-center gap-2 dark:text-white ${
-                  modalInfo.messageType === 'warning'
-                    ? 'text-main opacity-70'
-                    : ''
-                }`"
+                class="
+                  text-xl
+                  font-semibold
+                  leading-6
+                  flex
+                  items-center
+                  gap-2
+                  dark:text-white
+                "
               >
-                {{
-                  modalInfo.messageType === "warning"
-                    ? "Warning"
-                    : modalInfo.messageType === "settings"
-                    ? "Settings"
-                    : ""
-                }}
-                <svg
-                  class="fill-main w-5 h-5 inline"
-                  v-if="modalInfo.messageType === 'warning'"
-                >
-                  <use
-                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#exclamation-triangle-fill"
-                  />
-                </svg>
-                <svg
-                  class="fill-main w-5 h-5 inline"
-                  v-if="modalInfo.messageType === 'settings'"
-                >
+                Settings
+                <svg class="fill-main w-5 h-5 inline">
                   <use
                     xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#gear"
                   />
                 </svg>
               </DialogTitle>
               <div class="mt-2">
-                <p
-                  class="text-lg text-gray-500"
-                  v-if="modalInfo.messageType === 'warning'"
-                >
-                  {{ modalInfo.message }}
-                </p>
-                <div
-                  class="flex flex-col"
-                  v-else-if="modalInfo.messageType === 'settings'"
-                >
-                  <div class="flex justify-between mt-4 dark:text-white">
-                    <h4>Default unit (kilometers/hour or miles/hour)</h4>
-                    <Switch
-                      v-model="useDefaultUnit"
-                      :class="`bg-main relative inline-flex h-6 w-11 items-center rounded-full transition ${
-                        !useDefaultUnit ? 'opacity-100' : 'opacity-50'
-                      }`"
-                    >
-                      <span class="sr-only">Default unit</span>
-                      <span
-                        :class="`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                          !useDefaultUnit ? 'translate-x-6' : 'translate-x-1'
-                        }`"
-                      ></span>
-                    </Switch>
+                <div class="flex flex-col">
+                  <div class="flex flex-col mt-4 dark:text-white">
+                    <h4>Measurement to use 📏</h4>
+                    <div class="flex gap-6 justify-center my-5">
+                      <button
+                        @click="settings.unit = 'standard'"
+                        :class="settings.unit === 'standard' ? 'text-main' : ''"
+                      >
+                        Standard
+                      </button>
+                      <button
+                        @click="settings.unit = 'imperial'"
+                        :class="settings.unit === 'imperial' ? 'text-main' : ''"
+                      >
+                        Imperial
+                      </button>
+                      <button
+                        @click="settings.unit = 'metric'"
+                        :class="settings.unit === 'metric' ? 'text-main' : ''"
+                      >
+                        Metric
+                      </button>
+                    </div>
                   </div>
                   <div class="flex justify-between mt-4 dark:text-white">
-                    <h4>Display temperature 🌡️ in (&deg;C/&deg;F)</h4>
+                    <h4>Use your location to find the weather</h4>
                     <Switch
-                      v-model="useCelsuis"
+                      v-model="useBrowserLocation"
                       :class="`bg-main relative inline-flex h-6 w-11 items-center rounded-full transition ${
-                        !useCelsuis ? 'opacity-100' : 'opacity-50'
+                        useBrowserLocation ? 'opacity-100' : 'opacity-50'
                       }`"
                     >
                       <span class="sr-only"
-                        >Display temperature in &deg;C / &deg;F</span
+                        >Use your weather to find the weather</span
                       >
                       <span
                         :class="`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                          !useCelsuis ? 'translate-x-6' : 'translate-x-1'
-                        }`"
-                      ></span>
-                    </Switch>
-                  </div>
-                  <div class="flex justify-between mt-4 dark:text-white">
-                    <h4>Show the air quality 🍃</h4>
-                    <Switch
-                      v-model="settings.useAirQuality"
-                      :class="`bg-main relative inline-flex h-6 w-11 items-center rounded-full transition ${
-                        settings.useAirQuality ? 'opacity-100' : 'opacity-50'
-                      }`"
-                    >
-                      <span class="sr-only">Show the air quality</span>
-                      <span
-                        :class="`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                          settings.useAirQuality
-                            ? 'translate-x-6'
-                            : 'translate-x-1'
+                          useBrowserLocation ? 'translate-x-6' : 'translate-x-1'
                         }`"
                       ></span>
                     </Switch>
@@ -237,18 +183,8 @@ const closeModal = () => (isOpen.value = false);
                   title="Close me"
                 >
                   <div class="flex gap-2 items-center">
-                    {{
-                      modalInfo.messageType === "warning" ||
-                      modalInfo.messageType === "error"
-                        ? "Got it, thanks"
-                        : modalInfo.messageType === "settings"
-                        ? "Done"
-                        : ""
-                    }}
-                    <svg
-                      class="fill-white w-5 h-5"
-                      v-if="modalInfo.messageType === 'settings'"
-                    >
+                    Done
+                    <svg class="fill-white w-5 h-5">
                       <use
                         xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#check-circle-fill"
                       />

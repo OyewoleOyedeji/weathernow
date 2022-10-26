@@ -1,5 +1,8 @@
-<script setup>
-const errorMessage = useState("errorMessage");
+<script setup lang="ts">
+interface errorMessage {
+  message: string;
+}
+const message = useState<errorMessage>("errorMessage");
 </script>
 
 <template>
@@ -13,7 +16,7 @@ const errorMessage = useState("errorMessage");
           after:content-[close-quote]
           text-main text-xl
         "
-        >{{ errorMessage }}</span
+        >{{ message }}</span
       >
     </h2>
   </section>

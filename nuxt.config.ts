@@ -38,7 +38,7 @@ export default defineNuxtConfig({
       process.env.NODE_ENV === "development"
         ? config.get("weatherApiKey")
         : process.env.WEATHERAPI_KEY,
-    baseUri: "https://api.weatherapi.com",
+    baseUri: "https://api.openweathermap.org",
     public: {
       idLength: 64,
     },

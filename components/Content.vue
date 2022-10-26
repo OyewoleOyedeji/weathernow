@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const loading = useState("loading");
 const initialLoad = useState("initialLoad");
 const error = useState("error");
@@ -11,7 +11,9 @@ const error = useState("error");
       container
       mx-auto
       w-full
-      h-screen
+      h-[81vh]
+      2xl:h-[87vh]
+      xl:h-[81vh]
       items-center
       selection:bg-main selection:bg-opacity-30
       transition
@@ -26,29 +28,7 @@ const error = useState("error");
         Where do you want to find the weather of?
       </h2>
     </div>
-    <div class="animate-pulse" v-else-if="loading">
-      <div class="flex flex-col">
-        <div
-          class="
-            relative
-            before:content-['']
-            before:absolute
-            before:h-32
-            before:w-32
-            before:bg-gray-400
-            before:rounded-full
-            before:flex
-          "
-        >
-          <div
-            class="
-              relative
-              before:absolute before:content-[''] before:h-32 before:w-32
-            "
-          ></div>
-        </div>
-      </div>
-    </div>
+    <Loading v-else-if="loading" />
     <Results v-else-if="!loading && !initialLoad && !error" />
     <Error v-else-if="error" />
   </main>

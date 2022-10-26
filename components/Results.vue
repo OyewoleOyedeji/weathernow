@@ -1,563 +1,310 @@
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
+import {
+  calculateDirection,
+  countryCodeConverter,
+  dateFormatter,
+  thermometer,
+} from "~/composables/useUtilities";
 
-const results = useState<object>("results");
-const settings = useState<object>("settings");
-const direction = useState<string | null>("direction", () => null);
+interface settings {
+  useBrowserLocation: boolean;
+  unit: string;
+}
 
-const calculateDirection = (_16pointDirection: string) => {
-  if (_16pointDirection.length === 3) {
-    if (_16pointDirection.slice(1, 3) === "SW") {
-      direction.value = "west";
-    } else if (_16pointDirection.slice(1, 3) === "NW") {
-      direction.value = "north";
-    } else if (_16pointDirection.slice(1, 3) === "NE") {
-      direction.value = "east";
-    } else if (_16pointDirection.slice(1, 3) === "SE") {
-      direction.value = "south";
-    }
-  } else if (_16pointDirection.length === 2) {
-    if (_16pointDirection === "NW") {
-      direction.value = "north";
-    } else if (_16pointDirection === "SW") {
-      direction.value = "west";
-    } else if (_16pointDirection === "NE") {
-      direction.value = "east";
-    } else if (_16pointDirection === "SE") {
-      direction.value = "south";
-    }
-  } else {
-    if (_16pointDirection === "N") {
-      direction.value = "north";
-    } else if (_16pointDirection === "S") {
-      direction.value = "south";
-    } else if (_16pointDirection === "W") {
-      direction.value = "west";
-    } else if (_16pointDirection === "E") {
-      direction.value = "east";
-    }
-  }
-};
+interface results {
+  data: any;
+}
 
-calculateDirection(results.value.data.current.wind_dir);
+const results = useState<results>("results");
+const settings = useState<settings>("settings");
+
+const convertCodeToCountry = (countryCode: string) =>
+  countryCodeConverter(countryCode);
+
+const { name: countryName } = await convertCodeToCountry(
+  results.value.data.sys.country
+);
+
+const { direction } = calculateDirection(results.value.data.wind.deg);
+const { parsedDate: parsedDateSunrise } = await dateFormatter(
+  results.value.data.sys.sunrise
+);
+const { parsedDate: parsedDateSunset } = await dateFormatter(
+  results.value.data.sys.sunset
+);
+
+const { temperature } = thermometer(
+  results.value.data.main.feels_like,
+  settings.value.unit
+);
 </script>
 
 <template>
-  <div class="w-full">
-    <div class="flex flex-col">
-      <div class="flex items-center justify-around mb-10">
-        <div class="flex items-center">
-          <img
-            :src="`https:${results.data.current.condition.icon}`"
-            :alt="results.data.current.condition.text"
-            :title="results.data.current.condition.text"
-          />
-          <div class="flex flex-col mx-10">
-            <h1 class="text-5xl mb-2 dark:text-white">
-              {{ results.data.location.name }}
-            </h1>
-            <h2 class="text-3xl text-gray-500">
-              / {{ results.data.location.country }}
-            </h2>
+  <div class="w-[90%] mx-auto">
+    <!-- Section containing weather icon, city and country name and temperature -->
+    <div class="flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <img
+          :src="`http://openweathermap.org/img/wn/${results.data.weather[0].icon}@2x.png`"
+          :alt="`${results.data.weather[0].main} icon`"
+        />
+        <div class="flex flex-col">
+          <h1 class="text-5xl">{{ results.data.name }}</h1>
+          <div class="flex items-center gap-3">
+            <h2 class="text-3xl text-slate-500">/ {{ countryName }}</h2>
+            <h3 class="text-xl bg-main bg-opacity-50 px-3 py-2 rounded-full">
+              {{ results.data.sys.country }}
+            </h3>
           </div>
         </div>
-        <div>
-          <h1 class="text-7xl dark:text-white">
-            {{
-              settings.defaultTemperature === "celsuis"
-                ? results.data.current.temp_c
-                : results.data.current.temp_f
-            }}&deg;{{ settings.defaultTemperature === "celsuis" ? "C" : "F" }}
-          </h1>
-        </div>
       </div>
-      <TabGroup>
-        <TabList class="flex justify-center gap-24 text-xl">
-          <Tab
-            class="
-              pb-2
-              ui-selected:border-b
-              border-main
-              ui-selected:text-main
-              transition
-              hover:opacity-50
-              dark:opacity-50
-              dark:hover:opacity-100
-              dark:text-white
-              dark:ui-selected:text-main
-            "
-            title="View general information"
-            >Information</Tab
-          >
-          <Tab
-            class="
-              ui-selected:text-main ui-selected:border-b
-              border-main
-              pb-2
-              transition
-              hover:opacity-50
-              dark:opacity-50
-              dark:hover:opacity-100
-              dark:text-white
-              dark:ui-selected:text-main
-            "
-            title="View wind information"
-            >Wind stats</Tab
-          >
-          <Tab
-            class="
-              ui-selected:text-main ui-selected:border-b
-              border-main
-              pb-2
-              transition
-              hover:opacity-50
-              dark:opacity-50
-              dark:hover:opacity-100
-              dark:text-white
-              dark:ui-selected:text-main
-            "
-            title="View atmosphere information"
-            >Atmosphere</Tab
-          >
-        </TabList>
-        <TabPanels>
-          <!-- Information tab content -->
-          <TabPanel class="flex justify-center gap-32 mt-10">
-            <!-- Region -->
-            <div class="flex items-center gap-6">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#map"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    before:absolute
-                    before:content-['']
-                    before:w-[20%]
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    relative
-                    text-lg text-gray-600
-                    dark:text-white dark:before:bg-white
-                    before:rounded-full
-                  "
-                >
-                  Your region
-                </h1>
-                <h2 class="text-xl text-main">
-                  {{ results.data.location.region }}
-                </h2>
-              </div>
-            </div>
-
-            <!-- Temperature -->
-            <div class="flex text-xl items-center text-main gap-4">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#thermometer-low"
-                  v-if="
-                    (settings.defaultTemperature === 'celsuis' &&
-                      results.data.current.feelslike_c < 8) ||
-                    (settings.defaultTemperature === 'fahrenheit' &&
-                      results.data.current.feelslike_f < 40)
-                  "
-                />
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#thermometer-high"
-                  v-else-if="
-                    (settings.defaultTemperature === 'celsuis' &&
-                      results.data.current.feelslike_c > 37) ||
-                    (settings.defaultTemperature === 'fahrenheit' &&
-                      results.data.current.feelslike_f > 98.6)
-                  "
-                />
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#thermometer-half"
-                  v-else-if="
-                    (settings.defaultTemperature === 'celsuis' &&
-                      !(results.data.current.feelslike_c < 8) &&
-                      !(results.data.current.feelslike_c > 37)) ||
-                    (settings.defaultTemperature === 'fahrenheit' &&
-                      !(results.data.current.feelslike_f < 40) &&
-                      !(results.data.current.feelslike_f > 98.6))
-                  "
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-md text-gray-500
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                    before:-bottom-1
-                  "
-                >
-                  It feels
-                </h1>
-                <h2
-                  v-if="
-                    (settings.defaultTemperature === 'celsuis' &&
-                      results.data.current.feelslike_c < 8) ||
-                    (settings.defaultTemperature === 'fahrenheit' &&
-                      results.data.current.feelslike_f < 40)
-                  "
-                >
-                  Cold
-                </h2>
-                <h2
-                  v-else-if="
-                    (settings.defaultTemperature === 'celsuis' &&
-                      results.data.current.feelslike_c > 37) ||
-                    (settings.defaultTemperature === 'fahrenheit' &&
-                      results.data.current.feelslike_f > 98.6)
-                  "
-                >
-                  Hot
-                </h2>
-                <h2
-                  v-else-if="
-                    (settings.defaultTemperature === 'celsuis' &&
-                      !(results.data.current.feelslike_c < 8) &&
-                      !(results.data.current.feelslike_c > 37)) ||
-                    (settings.defaultTemperature === 'fahrenheit' &&
-                      !(results.data.current.feelslike_f < 40) &&
-                      !(results.data.current.feelslike_f > 98.6))
-                  "
-                >
-                  Average
-                </h2>
-              </div>
-            </div>
-
-            <!-- Period -->
-            <div class="flex items-center gap-6">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#sun-fill"
-                  v-if="results.data.current.is_day === 1"
-                />
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#moon-stars-fill"
-                  v-else-if="results.data.current.is_day === 0"
-                />
-              </svg>
-              <div class="flex flex-col gap-4 text-main">
-                <h1
-                  class="
-                    text-lg text-gray-500
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Period
-                </h1>
-                <h2 v-if="results.data.current.is_day === 1">Day</h2>
-                <h2 v-else-if="results.data.current.is_day === 0">Night</h2>
-              </div>
-            </div>
-          </TabPanel>
-
-          <!-- Wind stats tab content -->
-          <TabPanel class="flex justify-center mt-10">
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-down"
-                  v-if="direction === 'south'"
-                />
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-up"
-                  v-else-if="direction === 'north'"
-                />
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-left"
-                  v-else-if="direction === 'west'"
-                />
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-right"
-                  v-else-if="direction === 'east'"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:rounded-full
-                    before:-bottom-1
-                    dark:text-white dark:before:bg-white
-                  "
-                >
-                  Wind direction
-                </h1>
-                <h2 class="text-main text-lg">
-                  {{
-                    direction === "west"
-                      ? "West"
-                      : direction === "east"
-                      ? "East"
-                      : direction === "south"
-                      ? "South"
-                      : direction === "north"
-                      ? "North"
-                      : ""
-                  }}
-                </h2>
-              </div>
-            </div>
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#wind"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:rounded-full
-                    before:-bottom-1
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Wind gust
-                </h1>
-                <h2
-                  :class="`text-main text-lg after:ml-1  ${
-                    settings.defaultUnit === 'km/hr'
-                      ? `after:content-['km/hr']`
-                      : `after:content-['m/hr']`
-                  }`"
-                >
-                  {{
-                    settings.defaultUnit === "km/hr"
-                      ? results.data.current.gust_kph
-                      : results.data.current.gust_mph
-                  }}
-                </h2>
-              </div>
-            </div>
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#speedometer2"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:rounded-full
-                    before:-bottom-1
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Wind speed
-                </h1>
-                <h2
-                  :class="`text-main text-lg after:ml-1  ${
-                    settings.defaultUnit === 'km/hr'
-                      ? `after:content-['km/hr']`
-                      : `after:content-['m/hr']`
-                  }`"
-                >
-                  {{
-                    settings.defaultUnit === "km/hr"
-                      ? results.data.current.wind_kph
-                      : results.data.current.wind_mph
-                  }}
-                </h2>
-              </div>
-            </div>
-          </TabPanel>
-
-          <!-- Atmosphere tab content -->
-          <TabPanel class="flex justify-center gap-16 mt-10 w-full flex-wrap">
-            <!-- Cloud % -->
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#clouds"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Cloud %
-                </h1>
-                <h2 class="text-main text-lg">
-                  {{ results.data.current.cloud }}
-                </h2>
-              </div>
-            </div>
-
-            <!-- Humidity % -->
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#moisture"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Humidity %
-                </h1>
-                <h2 class="text-main text-lg">
-                  {{ results.data.current.humidity }}
-                </h2>
-              </div>
-            </div>
-
-            <!-- UV index -->
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#sun"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  UV index
-                </h1>
-                <h2 class="text-main text-lg">
-                  {{ results.data.current.uv }}
-                </h2>
-              </div>
-            </div>
-
-            <!-- Pressure (inches) -->
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#sort-numeric-down-alt"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/2
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Pressure (inches)
-                </h1>
-                <h2 class="text-main text-lg">
-                  {{ results.data.current.pressure_in }}
-                </h2>
-              </div>
-            </div>
-
-            <!-- Precipitation (inches) -->
-            <div class="flex gap-6 w-1/4 items-center justify-center">
-              <svg class="w-20 h-20 fill-main">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#umbrella"
-                />
-              </svg>
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="
-                    text-lg text-gray-600
-                    relative
-                    before:absolute
-                    before:content-['']
-                    before:w-1/4
-                    before:h-1
-                    before:bg-gray-500
-                    before:-bottom-1
-                    before:rounded-full
-                    dark:before:bg-white dark:text-white
-                  "
-                >
-                  Precipitation (inches)
-                </h1>
-                <h2 class="text-main text-lg">
-                  {{ results.data.current.precip_in }}
-                </h2>
-              </div>
-            </div>
-          </TabPanel>
-        </TabPanels>
-      </TabGroup>
+      <h1 class="text-7xl text-main opacity-80">
+        {{ results.data.main.temp }}&nbsp;{{
+          settings.unit === "standard"
+            ? "K"
+            : settings.unit === "metric"
+            ? "&deg;C"
+            : settings.unit === "imperial"
+            ? "&deg;F"
+            : ""
+        }}
+      </h1>
     </div>
+
+    <!-- Section containing the tabs -->
+    <TabGroup>
+      <TabList class="flex justify-center gap-10 text-xl my-10">
+        <Tab
+          class="
+            ui-selected:text-main ui-selected:underline
+            underline-offset-8
+            transition
+          "
+          >General</Tab
+        >
+        <Tab
+          class="
+            ui-selected:text-main ui-selected:underline
+            underline-offset-8
+            transition
+          "
+          >Environment</Tab
+        >
+        <Tab
+          class="
+            ui-selected:text-main ui-selected:underline
+            underline-offset-8
+            transition
+          "
+          >Wind</Tab
+        >
+      </TabList>
+      <TabPanels>
+        <!-- Coordinates, sunrise and sunset panel -->
+        <TabPanel class="flex items-center justify-around">
+          <!-- Coordinates -->
+          <div class="flex w-1/3 justify-center gap-5 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#geo"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl text-main mb-2">Coordinates</h1>
+              <h2 class="text-xl text-slate-500">
+                Longitude - {{ results.data.coord.lat }}
+              </h2>
+              <h2 class="text-xl text-slate-500">
+                Latitude - {{ results.data.coord.lon }}
+              </h2>
+            </div>
+          </div>
+
+          <!-- Sunrise at -->
+          <div class="flex w-1/3 justify-center gap-5 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#sunrise"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl text-main">Sunrise at</h1>
+              <h2 class="text-xl text-slate-500">{{ parsedDateSunrise }}</h2>
+            </div>
+          </div>
+
+          <!-- Sunset at -->
+          <div class="flex w-1/3 justify-center gap-5 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#sunset"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl text-main">Sunset at</h1>
+              <h2 class="text-xl text-slate-500">{{ parsedDateSunset }}</h2>
+            </div>
+          </div>
+        </TabPanel>
+        <!-- Pressure, humidity, visibility and temperature (feels like) panel -->
+        <TabPanel class="flex items-center justify-around">
+          <!-- Pressure -->
+          <div class="flex w-1/4 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#sort-numeric-down-alt"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Pressure</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ results.data.main.pressure }}
+              </h2>
+            </div>
+          </div>
+
+          <!-- Humidity -->
+          <div class="flex w-1/4 gap-5 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#moisture"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Humidity</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ results.data.main.humidity }}%
+              </h2>
+            </div>
+          </div>
+
+          <!-- Visibility -->
+          <div class="flex w-1/4 gap-5 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#eye"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Visibility</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ results.data.visibility / 1000 }}km
+              </h2>
+            </div>
+          </div>
+
+          <!-- Temperature (feels like) -->
+          <div class="flex w-1/4 items-center">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#thermometer-high"
+                v-if="temperature === 'hot'"
+              />
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#thermometer-low"
+                v-else-if="temperature === 'cold'"
+              />
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#thermometer-half"
+                v-else
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">It feels</h1>
+              <h2 class="text-xl text-slate-500">
+                {{
+                  temperature === "midway"
+                    ? "Warm"
+                    : temperature === "hot"
+                    ? "Hot"
+                    : "Cold"
+                }}
+              </h2>
+            </div>
+          </div>
+        </TabPanel>
+        <!-- Wind speed, wind direction, gust and cloudiness panel -->
+        <TabPanel class="flex items-center justify-around">
+          <!-- Wind speed -->
+          <div class="flex w-1/4 items-center gap-5">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#speedometer2"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Wind speed</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ results.data.wind.speed }}&nbsp;{{
+                  settings.unit === "imperial" ? "miles/hour" : "meters/second"
+                }}
+              </h2>
+            </div>
+          </div>
+
+          <!-- Wind direction -->
+          <div class="flex w-1/4 items-center gap-5">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-up"
+                v-if="direction === 'north'"
+              />
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-down"
+                v-else-if="direction === 'south'"
+              />
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-left"
+                v-else-if="direction === 'west'"
+              />
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#arrow-90deg-right"
+                v-else
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Wind direction</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ direction.charAt(0).toUpperCase()
+                }}{{ direction.slice(1) }} ({{ results.data.wind.deg }}&deg;)
+              </h2>
+            </div>
+          </div>
+
+          <!-- Gust -->
+          <div class="flex w-1/4 items-center gap-5">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#wind"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Gust</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ results.data.wind.gust }}&nbsp;{{
+                  settings.unit === "imperial" ? "miles/hour" : "meters/second"
+                }}
+              </h2>
+            </div>
+          </div>
+
+          <!-- Cloudiness -->
+          <div class="flex w-1/4 items-center gap-5">
+            <svg class="w-16 h-16 fill-main">
+              <use
+                xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#clouds"
+              />
+            </svg>
+            <div class="flex flex-col">
+              <h1 class="text-2xl">Cloudiness</h1>
+              <h2 class="text-xl text-slate-500">
+                {{ results.data.clouds.all }}%
+              </h2>
+            </div>
+          </div>
+        </TabPanel>
+      </TabPanels>
+    </TabGroup>
   </div>
 </template>

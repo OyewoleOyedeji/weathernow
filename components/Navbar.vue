@@ -1,110 +1,69 @@
-<script lang="ts" setup>
-import { promiseTimeout } from "@vueuse/core";
-import { nanoid } from "nanoid";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+<script setup lang="ts">
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  TransitionRoot,
+} from "@headlessui/vue";
 
-const results = useState("results");
-const loading = useState("loading", () => false);
-const _error = useState("error", () => false);
-const config = useRuntimeConfig();
+import { fetchWeather } from "~/composables/useUtilities";
 
-const query = useState("query", () => "");
-const id = useState("id");
-const initialLoad = useState("initialLoad");
-const isModalOpen = useState("isOpen");
-const modal = useState("modalMessage");
+interface errorMessage {
+  message: string;
+}
+
+interface settings {
+  useBrowserLocation: boolean;
+  unit: string;
+}
+
+const settings = useState<settings>("settings");
+const isSettingsOpen = useState<boolean>("isModalOpen");
+const query = useState<string>("query", () => "");
 
 const showThemeOptions = useState("showThemeOptions", () => false);
 
-const colorMode = useColorMode();
-
 const checkWeather = async () => {
-  // Check if the query has any content
-  if (query.value.length !== 0) {
-    /**
-     * Set loading to true and create a timeout of 2800ms (2.8s)
-     * Then send a request to /api/weather with the information needed
-     */
+  const initialLoad = useState<boolean>("initialLoad");
+  const loading = useState("loading", () => true);
+  const results = useState<{}>("results");
+  const id = useState<string>("id");
+  const _error = useState("error");
 
-    loading.value = true;
-    useTimeout(2800);
-    const { data, error } = await useFetch("/api/weather", {
-      method: "post",
-      body: { query: query.value, useAqi: "no" },
-      server: false,
-      key: nanoid(config.idLength),
-      headers: {
-        Authorization: id.value,
-      },
-    });
+  if (initialLoad.value) {
+    initialLoad.value = false;
+  }
 
-    /**
-     * Watch for a positive change for the error ref
-     * and perform actions accordingly
-     */
+  loading.value = true;
+  try {
+    const _response = await fetchWeather(
+      query.value,
+      null,
+      null,
+      settings.value.unit,
+      id.value
+    );
 
-    watch(error, (_new, _old) => {
-      if (_new) {
-        useState("errorMessage", () => error.value.data.message);
-        promiseTimeout(3000).then(() => {
-          _error.value = true;
-          loading.value = false;
-        });
-      } else {
-        _error.value = false;
-      }
-    });
-
-    /**
-     * Search for errors initially
-     */
-    if (!error.value) {
-      if (_error.value) {
-        _error.value = false;
-      }
-
-      results.value = data.value;
-      await promiseTimeout(3000);
-      loading.value = false;
-    } else {
-      useState("errorMessage", () => error.value.data.message);
-      _error.value = true;
-      await promiseTimeout(3000);
-      loading.value = false;
+    if (_error.value) {
+      _error.value = false;
     }
-
-    // Clear the input field
+    results.value = _response.value;
+    loading.value = false;
+  } catch (error) {
     query.value = "";
-
-    // Set initial load to false after 1st request
-    if (initialLoad.value) {
-      initialLoad.value = false;
+    const message = useState("errorMessage", () => "");
+    if (error.data.message) {
+      message.value = error.data.message;
+      _error.value = true;
+      loading.value = false;
     }
-  } else if (query.value.length === 0) {
-    // Create a modal for when a user doesn't enter anything in the input
-    const modalInfo = {
-      messageType: "warning",
-      message: "You didn't type anything to search 😂",
-    };
-
-    modal.value = modalInfo;
-    isModalOpen.value = true;
   }
 };
 
-const toggleModal = (type: string) => {
-  const modalInfo = {
-    messageType: type,
-    message: "",
-  };
-  modal.value = modalInfo;
-  isModalOpen.value = true;
-};
+// const toggleModal = (type: string) => useToggleModal(type);
+const toggleSettings = () => useToggle(isSettingsOpen)();
 
-const selectTheme = (option: string) => {
-  colorMode.preference = option;
-  showThemeOptions.value = false;
-};
+const selectTheme = (option: string) => useSelectTheme(option);
 
 const toggleThemeOptions = useToggle(showThemeOptions);
 </script>
@@ -125,7 +84,12 @@ const toggleThemeOptions = useToggle(showThemeOptions);
   >
     <div class="flex items-center gap-4 md:gap-6 w-9/12 lg:w-[80%]">
       <!-- Search button -->
-      <button class="group" title="Check the weather!" @click="checkWeather()">
+      <button
+        class="group disabled:opacity-50"
+        title="Check the weather!"
+        @click="checkWeather()"
+        :disabled="query.length === 0"
+      >
         <svg class="transition fill-main group-hover:opacity-50 w-8 h-8">
           <use
             xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#check-circle-fill"
@@ -229,96 +193,99 @@ const toggleThemeOptions = useToggle(showThemeOptions);
               />
             </svg>
           </PopoverButton>
-          <PopoverPanel
-            class="
-              absolute
-              p-5
-              bg-main bg-opacity-80
-              left-1/2
-              top-[7vh]
-              2xl:top-[5vh]
-              -translate-x-1/2
-              flex flex-col
-              gap-4
-              rounded-2xl
-            "
-            static
-            v-if="showThemeOptions"
+          <TransitionRoot
+            :show="showThemeOptions"
+            enter="transition ease-in-out duration-200"
+            enter-from="translate-y-2"
+            enter-to="translate-y-4"
+            leave-from="translate-y-4"
+            leave-to="translate-y-2"
+            leave="transition ease-in-out duration-200"
           >
-            <div
+            <PopoverPanel
               class="
-                flex
+                absolute
+                p-5
+                bg-main bg-opacity-80
+                left-1/2
+                translate-y-4
+                -translate-x-1/2
+                flex flex-col
                 gap-4
-                items-center
-                px-5
-                py-3
-                hover:bg-main hover:bg-opacity-70
-                transition
                 rounded-2xl
-                cursor-pointer
-                hover:opacity-70
               "
-              @click="selectTheme('system')"
             >
-              <svg class="w-6 h-6 transition fill-white">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#laptop"
-                />
-              </svg>
-              <h1 class="text-white">System</h1>
-            </div>
-            <div
-              class="
-                flex
-                gap-4
-                items-center
-                px-5
-                py-3
-                hover:bg-main hover:bg-opacity-70
-                transition
-                rounded-2xl
-                cursor-pointer
-                hover:opacity-70
-              "
-              @click="selectTheme('light')"
-            >
-              <svg class="w-6 h-6 transition fill-white">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#brightness-high-fill"
-                />
-              </svg>
-              <h1 class="text-white">Light</h1>
-            </div>
-            <div
-              class="
-                flex
-                gap-4
-                items-center
-                px-5
-                py-3
-                hover:bg-main hover:bg-opacity-70
-                transition
-                rounded-2xl
-                cursor-pointer
-                hover:opacity-70
-              "
-              @click="selectTheme('dark')"
-            >
-              <svg class="w-6 h-6 fill-white">
-                <use
-                  xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#moon-fill"
-                />
-              </svg>
-              <h1 class="text-white">Dark</h1>
-            </div>
-          </PopoverPanel>
+              <div
+                class="
+                  flex
+                  gap-4
+                  items-center
+                  px-5
+                  py-3
+                  hover:bg-main hover:bg-opacity-70
+                  transition
+                  rounded-2xl
+                  cursor-pointer
+                  hover:opacity-70
+                "
+                @click="selectTheme('system')"
+              >
+                <svg class="w-6 h-6 transition fill-white">
+                  <use
+                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#laptop"
+                  />
+                </svg>
+                <h1 class="text-white">System</h1>
+              </div>
+              <div
+                class="
+                  flex
+                  gap-4
+                  items-center
+                  px-5
+                  py-3
+                  hover:bg-main hover:bg-opacity-70
+                  transition
+                  rounded-2xl
+                  cursor-pointer
+                  hover:opacity-70
+                "
+                @click="selectTheme('light')"
+              >
+                <svg class="w-6 h-6 transition fill-white">
+                  <use
+                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#brightness-high-fill"
+                  />
+                </svg>
+                <h1 class="text-white">Light</h1>
+              </div>
+              <div
+                class="
+                  flex
+                  gap-4
+                  items-center
+                  px-5
+                  py-3
+                  hover:bg-main hover:bg-opacity-70
+                  transition
+                  rounded-2xl
+                  cursor-pointer
+                  hover:opacity-70
+                "
+                @click="selectTheme('dark')"
+              >
+                <svg class="w-6 h-6 fill-white">
+                  <use
+                    xlink:href="/node_modules/bootstrap-icons/bootstrap-icons.svg#moon-fill"
+                  />
+                </svg>
+                <h1 class="text-white">Dark</h1>
+              </div>
+            </PopoverPanel>
+          </TransitionRoot>
         </div>
       </Popover>
-      <button
-        class="group"
-        title="Toggle settings"
-        @click="toggleModal('settings')"
-      >
+      <button class="group" title="Toggle settings" @click="toggleSettings()">
         <svg
           class="
             fill-main
