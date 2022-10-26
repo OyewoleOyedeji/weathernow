@@ -83,14 +83,12 @@ export const thermometer = (_temperature: number, unit: string) => {
     } else {
       temperature.value = "hot";
     }
+  } else if (_temperature <= 40) {
+    temperature.value = "cold";
+  } else if (_temperature > 40 && _temperature < 98.6) {
+    temperature.value = "midway";
   } else {
-    if (_temperature <= 40) {
-      temperature.value = "cold";
-    } else if (_temperature > 40 && _temperature < 98.6) {
-      temperature.value = "midway";
-    } else {
-      temperature.value = "hot";
-    }
+    temperature.value = "hot";
   }
 
   return { temperature };

@@ -54,22 +54,18 @@ onMounted(async () => {
       const settingsParsed: settings = JSON.parse(settings);
       useState("settings", () => settingsParsed);
     } else {
-      const _settings = useState<settings>("settings", () => {
-        return {
-          useBrowserLocation: false,
-          unit: "standard",
-        };
-      });
+      const _settings = useState<settings>("settings", () => ({
+        useBrowserLocation: false,
+        unit: "standard",
+      }));
       window.localStorage.setItem("settings", JSON.stringify(_settings.value));
     }
   } else {
     useState("id", () => nanoid(readableConfig.idLength));
-    useState<settings>("settings", () => {
-      return {
-        useBrowserLocation: false,
-        unit: "standard",
-      };
-    });
+    useState<settings>("settings", () => ({
+      useBrowserLocation: false,
+      unit: "standard",
+    }));
   }
   const settings = useState<settings>("settings");
   if (settings.value.useBrowserLocation) {

@@ -137,7 +137,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
       <NuxtLink
         to="https://github.com/OyewoleOyedeji/weathernow"
         target="_blank"
-        title="Visit GitHub repository"
+        title="Visit project repository"
         class="
           p-3
           bg-main bg-opacity-60
@@ -146,6 +146,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
           transition-colors
           duration-[300ms]
         "
+        ><span class="sr-only">Visit project repository</span
         ><svg
           class="
             w-6
@@ -156,7 +157,6 @@ const toggleThemeOptions = useToggle(showThemeOptions);
             dark:fill-white dark:opacity-50 dark:hover:opacity-100
           "
         >
-          <span class="sr-only">Visit project repository</span>
           <use xlink:href="/bootstrap-icons.svg#github" /></svg
       ></NuxtLink>
 
@@ -178,6 +178,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
             @click="toggleThemeOptions()"
             title="Toggle theme"
           >
+            <span class="sr-only">Toggle theme</span>
             <svg
               class="
                 fill-black
@@ -292,6 +293,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
         title="Toggle settings"
         @click="toggleSettings()"
       >
+        <span class="sr-only">Toggle settings</span>
         <svg
           class="
             fill-black

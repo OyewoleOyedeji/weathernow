@@ -35,11 +35,7 @@ onMounted(async () => {
   );
 
   watch(useBrowserLocation, (_new) => {
-    if (!_new) {
-      settings.value.useBrowserLocation = false;
-    } else {
-      settings.value.useBrowserLocation = true;
-    }
+    settings.value.useBrowserLocation = _new ? true : false;
   });
 });
 
