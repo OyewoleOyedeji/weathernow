@@ -52,10 +52,16 @@ const checkWeather = async () => {
   } catch (error) {
     query.value = "";
     const message = useState("errorMessage", () => "");
-    if (error.data.message) {
-      message.value = error.data.message;
+    if (error.data === undefined) {
+      message.value = "Network request failed";
       _error.value = true;
       loading.value = false;
+    } else {
+      if (error.data.message) {
+        message.value = error.data.message;
+        _error.value = true;
+        loading.value = false;
+      }
     }
   }
   query.value = "";
