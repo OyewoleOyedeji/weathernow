@@ -58,3 +58,7 @@ npm run preview
 ```
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=github.com%2FOyewoleOyedeji%2Fweathernow&env=weatherApiKey&envDescription=API%20Keys%20needed%20for%20request%20to%20weather%20API&envLink=https%3A%2F%2Fhome.openweathermap.org%2Fapi_keys)
+
+## TODOS
+
+- Add a way of calculating the new temperature when a user changes the unit after they have sent the request to the server
