@@ -4,14 +4,19 @@ export default defineNuxtConfig({
   typescript: {
     shim: false,
   },
-  modules: ["@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxtjs/color-mode"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@vueuse/nuxt",
+    "@nuxtjs/color-mode",
+    "@kevinmarrec/nuxt-pwa",
+  ],
   app: {
     head: {
       title: "Weathernow",
       meta: [
         {
           name: "description",
-          content: "Find the weather of different locations",
+          content: "Just another weather application",
         },
       ],
       link: [
@@ -45,5 +50,15 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: "",
+  },
+  pwa: {
+    meta: {
+      author: "OyedejiOyewole",
+      theme_color: "#f03a17",
+    },
+    manifest: {
+      name: "Weathernow",
+      description: "Just another weather application",
+    },
   },
 });
