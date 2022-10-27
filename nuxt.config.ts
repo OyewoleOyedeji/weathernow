@@ -56,6 +56,9 @@ export default defineNuxtConfig({
       author: "OyedejiOyewole",
       theme_color: "#f03a17",
     },
+    icon: {
+      fileName: "favicon.svg",
+    },
     manifest: {
       name: "Weathernow",
       description: "Just another weather application",
