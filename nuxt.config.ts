@@ -32,6 +32,11 @@ export default defineNuxtConfig({
           sizes: "32x32",
           href: "/favicon.svg",
         },
+        {
+          rel: "preload",
+          href: "/bootstrap-icons.svg",
+          as: "image",
+        },
       ],
       htmlAttrs: {
         lang: "en",
