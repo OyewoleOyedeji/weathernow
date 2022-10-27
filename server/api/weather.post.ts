@@ -43,6 +43,9 @@ export default defineEventHandler(async (event) => {
         return {
           message: "Location not found",
         };
+      } else if (geo.length > 1) {
+        // TODO: handle when the geo api returns more than one location
+        console.log(geo, length);
       }
     } else {
       const data = await $fetch(

@@ -21,7 +21,7 @@ const checkWeather = async () => {
   loading.value = true;
   try {
     const _response = await fetchWeather(
-      query.value,
+      query.value.trim(),
       null,
       null,
       settings.value.unit,
@@ -59,7 +59,7 @@ const query = useState("query", () => "");
       container
       mx-auto
       w-full
-      md:h-[82vh]
+      md:h-screen
       items-center
       selection:bg-main selection:bg-opacity-30
       transition
@@ -79,9 +79,7 @@ const query = useState("query", () => "");
       v-if="!loading && initialLoad"
     >
       <h1 class="text-5xl md:text-7xl mb-2">Hola 👋</h1>
-      <h2 class="text-2xl md:text-4xl text-center">
-        Where do you want to find the weather of?
-      </h2>
+      <h2 class="text-2xl md:text-4xl text-center">What's the weather of ?</h2>
       <div class="items-center gap-6 flex md:hidden w-[90%] mt-10 mx-auto">
         <!-- Search input -->
         <div

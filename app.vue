@@ -5,7 +5,7 @@ import { settings } from "~/types/interfaces";
 
 useHead({
   bodyAttrs: {
-    class: "dark:bg-black dark:bg-opacity-90 h-[80vh]",
+    class: "dark:bg-black dark:bg-opacity-90",
   },
 });
 

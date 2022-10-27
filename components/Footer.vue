@@ -19,7 +19,7 @@ const checkWeather = async () => {
   loading.value = true;
   try {
     const _response = await fetchWeather(
-      query.value,
+      query.value.trim(),
       null,
       null,
       settings.value.unit,
@@ -32,7 +32,6 @@ const checkWeather = async () => {
     results.value = _response.value;
     loading.value = false;
   } catch (error) {
-    query.value = "";
     const message = useState("errorMessage", () => "");
     if (error.data === undefined) {
       message.value = "Network request failed";
@@ -51,8 +50,11 @@ const query = useState("query", () => "");
 </script>
 
 <template>
-  <footer class="flex flex-col gap-y-5 justify-center mx-auto w-[90%] mt-24">
-    <div class="items-center gap-6 flex md:hidden mx-auto" v-if="!initialLoad">
+  <footer class="flex flex-col gap-y-5 justify-center mx-auto w-[90%]">
+    <div
+      class="items-center gap-6 flex md:hidden mx-auto mt-28"
+      v-if="!initialLoad"
+    >
       <!-- Search input -->
       <div
         class="

@@ -61,7 +61,7 @@ const { temperature } = thermometer(
         items-center
         flex-col
         md:flex-row
-        mt-24
+        mt-28
         md:mt-0
       "
     >
@@ -162,10 +162,32 @@ const { temperature } = thermometer(
             <div class="flex flex-col">
               <h1 class="text-2xl dark:text-white mb-2">Coordinates</h1>
               <h2 class="text-xl text-slate-500 dark:text-main">
-                Longitude - {{ results.data.coord.lat }}
+                Longitude -
+                <span
+                  class="
+                    bg-main bg-opacity-50
+                    py-1
+                    px-3
+                    rounded-full
+                    text-black
+                    dark:text-white
+                  "
+                  >{{ results.data.coord.lon }}</span
+                >
               </h2>
-              <h2 class="text-xl text-slate-500 dark:text-main">
-                Latitude - {{ results.data.coord.lon }}
+              <h2 class="text-xl text-slate-500 dark:text-main mt-3">
+                Latitude -
+                <span
+                  class="
+                    bg-main bg-opacity-50
+                    py-1
+                    px-3
+                    rounded-full
+                    text-black
+                    dark:text-white
+                  "
+                  >{{ results.data.coord.lat }}</span
+                >
               </h2>
             </div>
           </div>

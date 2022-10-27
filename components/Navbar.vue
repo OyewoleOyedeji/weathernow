@@ -7,7 +7,7 @@ import {
 } from "@headlessui/vue";
 
 import { fetchWeather } from "~/composables/useUtilities";
-import { settings, errorMessage } from "~/types/interfaces";
+import { settings } from "~/types/interfaces";
 
 const isModalOpen = useState<boolean>("isModalOpen");
 const query = useState<string>("query", () => "");
@@ -29,7 +29,7 @@ const checkWeather = async () => {
   loading.value = true;
   try {
     const _response = await fetchWeather(
-      query.value,
+      query.value.trim(),
       null,
       null,
       settings.value.unit,
@@ -42,7 +42,6 @@ const checkWeather = async () => {
     results.value = _response.value;
     loading.value = false;
   } catch (error) {
-    query.value = "";
     const message = useState("errorMessage", () => "");
     if (error.data === undefined) {
       message.value = "Network request failed";
@@ -142,6 +141,8 @@ const toggleThemeOptions = useToggle(showThemeOptions);
           hover:bg-opacity-70
           transition-colors
           duration-[300ms]
+          dark:hover:bg-opacity-80
+          group
         "
         ><span class="sr-only">Visit project repository</span
         ><svg
@@ -151,7 +152,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
             opacity-60
             md:w-8 md:h-8
             transition
-            dark:fill-white dark:opacity-50 dark:hover:opacity-100
+            dark:fill-white dark:opacity-50 dark:group-hover:opacity-80
           "
         >
           <use xlink:href="/bootstrap-icons.svg#github" /></svg
@@ -163,6 +164,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
           <PopoverButton
             class="
               group
+              dark:hover:bg-opacity-80
               rotate-90
               outline-none
               p-3
@@ -183,7 +185,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
                 md:w-8 md:h-8
                 w-6
                 h-6
-                dark:group-hover:opacity-100 dark:opacity-50 dark:fill-white
+                dark:group-hover:opacity-80 dark:opacity-50 dark:fill-white
                 transition
               "
             >
@@ -210,6 +212,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
                 flex flex-col
                 gap-4
                 rounded-2xl
+                z-10
               "
             >
               <div
@@ -285,6 +288,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
           bg-main bg-opacity-60
           rounded-2xl
           hover:bg-opacity-70
+          dark:hover:bg-opacity-80
           duration-[300ms]
         "
         title="Toggle settings"
@@ -300,7 +304,7 @@ const toggleThemeOptions = useToggle(showThemeOptions);
             h-6
             md:w-8 md:h-8
             transition
-            dark:group-hover:opacity-100 dark:opacity-50
+            dark:group-hover:opacity-80 dark:opacity-50
           "
         >
           <use xlink:href="/bootstrap-icons.svg#gear-fill" />
