@@ -14,7 +14,7 @@
     "@vueuse/core": "^9.3.1",
     "@vueuse/nuxt": "^9.3.1",
     "config": "^3.3.8",
-    "nuxt": "3.0.0-rc.12"
+    "nuxt": "3.0.0-rc.13"
   },
   "dependencies": {
     "@headlessui/tailwindcss": "^0.1.1",
