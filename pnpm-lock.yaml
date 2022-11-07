@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@headlessui/tailwindcss': ^0.1.1
   '@headlessui/vue': ^1.7.3
-  '@kevinmarrec/nuxt-pwa': ^0.9.1
+  '@kevinmarrec/nuxt-pwa': ^0.10.0
   '@nuxtjs/color-mode': ^3.1.8
   '@nuxtjs/tailwindcss': ^6.1.0
   '@types/config': ^3.3.0
@@ -19,7 +19,7 @@ specifiers:
 dependencies:
   '@headlessui/tailwindcss': 0.1.1
   '@headlessui/vue': 1.7.4
-  '@kevinmarrec/nuxt-pwa': 0.9.1
+  '@kevinmarrec/nuxt-pwa': 0.10.0
   bootstrap-icons: 1.9.1
   moment: 2.29.4
   nanoid: 4.0.0
@@ -432,8 +432,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@kevinmarrec/nuxt-pwa/0.9.1:
-    resolution: {integrity: sha512-xrRn2ACFrr1KmN6HbdQmL6xUQXD8anAs4kd69teK7iNIECMLdCzQEu23GYBGG2uadgxdilynCZjwfwLzRYrdrg==}
+  /@kevinmarrec/nuxt-pwa/0.10.0:
+    resolution: {integrity: sha512-kH2IUSxCuZQnOhfdkKDF69VJyFtMAx/ZvrRA+jHMR4pLxk5PPfFeaePjRis2kttO+UKyaHtLH9kJq2w0Yzhx6A==}
     dependencies:
       hasha: 5.2.2
       sharp: 0.31.2
