@@ -1,4 +1,5 @@
 import moment from "moment";
+import { position, error } from "~/types/interfaces";
 
 interface results {
   value: any;
@@ -24,6 +25,7 @@ export const calculateDirection = (angle: number) => {
  * @returns a reactive string (`name`)
  */
 export const countryCodeConverter = async (countryCode: string) => {
+  // TODO: add a error handler to this request fails due to NetworkError
   const _response = ref([]);
   const name = ref("");
   await $fetch(
@@ -91,7 +93,7 @@ export const thermometer = (_temperature: number, unit: string) => {
 
 /**
  *
- * @param query as a string or null
+ * @param query as a string
  * @param latitude as a number or null
  * @param longitude as a number or null
  * @param unit as a string (possible values are metric, standard, imperial)
@@ -100,13 +102,14 @@ export const thermometer = (_temperature: number, unit: string) => {
  */
 export const fetchWeather = async (
   query: string,
-  latitude: number | null,
-  longitude: number | null,
+  coords: position | null,
   unit: string,
   _id: string
 ) => {
   const _response = ref<results | []>([]);
-  if (!(latitude && longitude)) {
+  const error = ref<error>({ message: "", hasOccurred: false });
+
+  if (!coords) {
     await $fetch("/api/weather", {
       method: "post",
       headers: {
@@ -116,31 +119,44 @@ export const fetchWeather = async (
         query,
         unit,
       },
-      onResponse({ response }) {
-        _response.value = response._data;
+      onResponse({ response: { _data } }) {
+        _response.value = _data;
       },
-      onResponseError({ response }) {
-        _response.value = response._data;
-      },
+    }).catch((_error) => {
+      if (_error.data !== undefined) {
+        const { statusMessage } = _error.data;
+        error.value = {
+          message: statusMessage,
+          hasOccurred: true,
+        };
+      } else {
+        error.value = {
+          message: "Request couldn't be completed",
+          hasOccurred: true,
+        };
+      }
     });
   } else {
-    _response.value = await $fetch("/api/weather", {
+    await $fetch("/api/weather", {
       method: "post",
       headers: {
         Authorization: _id,
       },
       body: {
-        lat: latitude,
-        lon: longitude,
+        lat: coords.latitude,
+        lon: coords.longitude,
         unit,
       },
-      onResponse({ response }) {
-        _response.value = response._data;
+      onResponse({ response: { _data } }) {
+        _response.value = _data;
       },
-      onRequestError({ error }) {
-        console.log(error);
-      },
+    }).catch((_error) => {
+      error.value = {
+        message: "Request couldn't be completed",
+        hasOccurred: true,
+      };
     });
   }
-  return _response;
+
+  return { _response, error };
 };
