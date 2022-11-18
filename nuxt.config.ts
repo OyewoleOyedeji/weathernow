@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@nuxtjs/color-mode",
     "@kevinmarrec/nuxt-pwa",
+    "@nuxtjs/html-validator",
   ],
   app: {
     head: {
