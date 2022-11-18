@@ -84,7 +84,9 @@ const checkWeather = async () => {
         title="Check the weather!"
         @click="checkWeather()"
         :disabled="query.length === 0"
+        type="button"
       >
+        <span class="sr-only">Check the weather!</span>
         <svg
           class="transition fill-main disabled:opacity-50 w-8 h-8"
           :class="query.length > 0 ? 'group-hover:opacity-50' : ''"

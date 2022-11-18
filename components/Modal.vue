@@ -115,18 +115,21 @@ const closeModal = () => (isModalOpen.value = false);
                       <button
                         @click="settings.unit = 'standard'"
                         :class="settings.unit === 'standard' ? 'text-main' : ''"
+                        type="button"
                       >
                         Standard
                       </button>
                       <button
                         @click="settings.unit = 'imperial'"
                         :class="settings.unit === 'imperial' ? 'text-main' : ''"
+                        type="button"
                       >
                         Imperial
                       </button>
                       <button
                         @click="settings.unit = 'metric'"
                         :class="settings.unit === 'metric' ? 'text-main' : ''"
+                        type="button"
                       >
                         Metric
                       </button>
