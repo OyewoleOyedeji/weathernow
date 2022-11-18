@@ -12,21 +12,33 @@ useHead({
 const { public: readableConfig } = useRuntimeConfig();
 const loading = useState("loading", () => false);
 const initialLoad = useState("initialLoad", () => true);
+const query = useState("query", () => "");
 
-const sendRequest = async (position) => {
+const sendRequest = async ({
+  coords: { longitude, latitude },
+}: GeolocationPosition) => {
   const _id = useState<string>("id");
   loading.value = true;
   const settings = useState<settings>("settings");
-  const _response = await fetchWeather(
-    null,
-    position.coords.latitude,
-    position.coords.longitude,
+  const error = useState("error");
+  const { _response, error: responseError } = await fetchWeather(
+    "",
+    { latitude, longitude },
     settings.value.unit,
     _id.value
   );
-  useState("results", () => _response.value);
-  loading.value = false;
-  initialLoad.value = false;
+
+  if (initialLoad.value) {
+    initialLoad.value = false;
+  }
+
+  if (responseError.value.hasOccurred) {
+    error.value = responseError.value;
+    loading.value = false;
+  } else {
+    useState("results", () => _response.value);
+    loading.value = false;
+  }
 };
 
 onMounted(async () => {
