@@ -1,52 +1,40 @@
 <script setup lang="ts">
 import { fetchWeather } from "~/composables/useUtilities";
-import { settings } from "~/types/interfaces";
+import { settings, error } from "~/types/interfaces";
 
-const initialLoad = useState("initialLoad");
+const initialLoad = useState<boolean>("initialLoad");
+const query = useState<string>("query");
 
 const checkWeather = async () => {
-  const initialLoad = useState<boolean>("initialLoad");
-  const loading = useState("loading", () => true);
+  const loading = useState<boolean>("loading");
   const results = useState<{}>("results");
   const id = useState<string>("id");
-  const _error = useState("error");
+  const error = useState<error>("error");
   const settings = useState<settings>("settings");
+
+  loading.value = true;
 
   if (initialLoad.value) {
     initialLoad.value = false;
   }
 
-  loading.value = true;
-  try {
-    const _response = await fetchWeather(
-      query.value.trim(),
-      null,
-      null,
-      settings.value.unit,
-      id.value
-    );
+  const { _response, error: responseError } = await fetchWeather(
+    query.value.trim(),
+    null,
+    settings.value.unit,
+    id.value
+  );
 
-    if (_error.value) {
-      _error.value = false;
-    }
+  if (responseError.value.hasOccurred) {
+    error.value = responseError.value;
+    loading.value = false;
+  } else {
     results.value = _response.value;
     loading.value = false;
-  } catch (error) {
-    const message = useState("errorMessage", () => "");
-    if (error.data === undefined) {
-      message.value = "Network request failed";
-      _error.value = true;
-      loading.value = false;
-    } else if (error.data.message) {
-      message.value = error.data.message;
-      _error.value = true;
-      loading.value = false;
-    }
   }
+
   query.value = "";
 };
-
-const query = useState("query", () => "");
 </script>
 
 <template>

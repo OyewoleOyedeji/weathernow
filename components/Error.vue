@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { errorMessage } from "~/types/interfaces";
-const message = useState<errorMessage>("errorMessage");
+import { error } from "~/types/interfaces";
+const error = useState<error>("error");
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const message = useState<errorMessage>("errorMessage");
           block
           md:inline
         "
-        >{{ message }}</span
+        >{{ error.message }}</span
       >
     </h2>
   </section>
