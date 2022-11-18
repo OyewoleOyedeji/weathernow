@@ -8,6 +8,7 @@ export interface position {
   latitude: number;
 }
 
-export interface errorMessage {
+export interface error {
+  hasOccurred: boolean;
   message: string;
 }
