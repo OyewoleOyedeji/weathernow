@@ -13,7 +13,7 @@ interface requestBody {
 }
 
 export default defineEventHandler(async (event) => {
-  const { lat, lon, query, unit }: requestBody = await useBody(event);
+  const { lat, lon, query, unit }: requestBody = await readBody(event);
   const config = useRuntimeConfig();
 
   if (event.req.headers.authorization !== undefined) {
